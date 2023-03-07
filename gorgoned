@@ -1,0 +1,53 @@
+prog=gorgoned
+DESC="Centreon Gorgone"
+start() {
+	echo "Starting $DESC" "$prog\n"
+	/usr/bin/perl /usr/bin/gorgoned --config=/etc/centreon-gorgone/config.yaml --logfile=/var/log/centreon-gorgone/gorgoned.log --severity="warning" &
+	exit 0
+}
+
+stop() {
+	echo "Stopping $DESC" "$prog\n"
+	killall -w perl
+	exit 0
+}
+
+restart() {
+        echo "Restarting $DESC" "$prog\n"
+        killall -w perl 
+	/usr/bin/perl /usr/bin/gorgoned --config=/etc/centreon-gorgone/config.yaml --logfile=/var/log/centreon-gorgone/gorgoned.log --severity="warning" &
+        exit 0
+}
+
+
+reload() {
+	restart
+	exit 0
+}
+
+force_reload() {
+	restart
+	exit 0
+}	
+
+case "$1" in
+	start)
+		start
+		;;
+	stop)
+		stop
+		;;
+	force-reload)
+		force_reload
+		;;
+	restart)
+		restart
+		;;
+
+	reload)
+		reload
+		;;
+	*)
+		echo "$Usage: $prog {start|stop|reload|force-reload|restart}"
+		exit2
+esac

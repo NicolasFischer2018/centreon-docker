@@ -1,0 +1,56 @@
+prog=cbd
+DESC="Centreon Broker watchdog"
+start() {
+	echo "Starting $DESC" "$prog\n"
+	/usr/sbin/cbwd /etc/centreon-broker/watchdog.json &
+	exit 0
+}
+
+stop() {
+	echo "Stopping $DESC" "$prog\n"
+	killall -w cbwd
+	exit 0
+}
+
+restart() {
+        echo "Restarting $DESC" "$prog\n"
+        killall -w cbwd
+	nohup /usr/sbin/cbwd /etc/centreon-broker/watchdog.json > logfile.out 2>&1 &
+	nohup service centengine restart > logfile.out 2>&1 &
+	echo $! > proc.pid
+#	killall -w sh
+#	exit 0
+}
+
+
+reload() {
+	restart
+#	exit 0
+}
+
+force_reload() {
+	restart
+#	exit 0
+}	
+
+case "$1" in
+	start)
+		start
+		;;
+	stop)
+		stop
+		;;
+	force-reload)
+		force_reload
+		;;
+	restart)
+		restart
+		;;
+
+	reload)
+		reload
+		;;
+	*)
+		echo "$Usage: $prog {start|stop|reload|force-reload|restart}"
+		exit2
+esac
